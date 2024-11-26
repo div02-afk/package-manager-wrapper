@@ -16,7 +16,7 @@ else
     use_apt=true
 fi
 
-FILENAME="./package_index.txt"
+FILENAME="/usr/package_index.txt"
 
 if [ ! -e "$FILENAME" ]; then
     touch "$FILENAME"
@@ -24,10 +24,14 @@ fi
 
 function brew_install(){
     if [ "$use_brew" = true ]; then
-        brew install "$1"
+        message=$(brew install "$1" 2>&1)
+        echo "$message"
         if [ $? -eq 0 ]; then
             add_package "$package" "brew"
             return 0
+        else
+            echo "Failed to install $1 with Homebrew. Searching for package..."
+            
         fi
     else
         return 1
@@ -41,7 +45,7 @@ function apt_install(){
             return 0
         else
             echo "Failed to install $1 with apt. Searching for package..."
-            sudo apt search "$1"
+            sudo apt search "$1" | head -n 20
         fi
         return 1;
     else
@@ -116,7 +120,8 @@ packages=("$@")
 if [ "$command" = "install" ]; then
     echo "Packages to install: ${packages[@]}"
     for package in "${packages[@]}"; do
-        package_manager=$(search_package "$package_name")
+        package_manager=$(search_package "$package")
+        echo "Package manager: $package_manager"
         if [ "$package_manager" = "brew" ]; then
             echo "Package already installed with Homebrew."
             continue
@@ -162,6 +167,7 @@ if [ "$command" = "install" ]; then
     touch "$FILENAME"
     brew_packages=($(brew list))
     apt_packages=($(apt list --installed | awk -F/ '{print $1}'))
+    apt_packages=("${apt_packages[@]:1}")
     total_packages_len=$(( ${#brew_packages[@]} + ${#apt_packages[@]} ))
     for package in "${brew_packages[@]}"; do
         add_package "$package" "brew"
@@ -170,6 +176,10 @@ if [ "$command" = "install" ]; then
         add_package "$package" "apt"
     done
     echo "Reindexed $total_packages_len packages."
+    elif [ "$command" = "search" ]; then
+    search_package "${packages[0]}"
+    elif [ "$command" = "list" ]; then
+    cat "$FILENAME"
 else
     echo "Unknown command: $command"
     exit 1
