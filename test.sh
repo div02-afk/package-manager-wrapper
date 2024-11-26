@@ -157,6 +157,18 @@ if [ "$command" = "install" ]; then
     done
     elif [ "$command" = "update" ]; then
     update
+    elif [ "$command" = "reindex" ]; then
+    rm "$FILENAME"
+    touch "$FILENAME"
+    brew_packages=($(brew list))
+    apt_packages=($(apt list --installed | awk -F/ '{print $1}'))
+    
+    for package in "${brew_packages[@]}"; do
+        add_package "$package" "brew"
+    done
+    for package in "${apt_packages[@]}"; do
+        add_package "$package" "apt"
+    done
 else
     echo "Unknown command: $command"
     exit 1
