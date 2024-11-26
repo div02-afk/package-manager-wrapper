@@ -162,13 +162,14 @@ if [ "$command" = "install" ]; then
     touch "$FILENAME"
     brew_packages=($(brew list))
     apt_packages=($(apt list --installed | awk -F/ '{print $1}'))
-    
+    total_packages_len=$(( ${#brew_packages[@]} + ${#apt_packages[@]} ))
     for package in "${brew_packages[@]}"; do
         add_package "$package" "brew"
     done
     for package in "${apt_packages[@]}"; do
         add_package "$package" "apt"
     done
+    echo "Reindexed $total_packages_len packages."
 else
     echo "Unknown command: $command"
     exit 1
