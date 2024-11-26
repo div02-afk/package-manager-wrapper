@@ -8,8 +8,8 @@ else
     use_brew=true
 fi
 
-# Check if apt-get is installed
-if ! command -v apt-get &> /dev/null; then
+
+if ! command -v apt &> /dev/null; then
     #   echo "apt-get is not installed. Skipping apt-get installation."
     use_apt=false
 else
