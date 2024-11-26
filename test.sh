@@ -84,13 +84,13 @@ function update(){
     fi
 }
 
-add_package() {
+function add_package() {
     local package_name=$1
     local package_manager=$2
     echo "$package_name : $package_manager" >> "$FILENAME"
     echo "Added $package_name with $package_manager."
 }
-remove_package() {
+function remove_package() {
     local package_name=$1
     if grep -q "^$package_name :" "$FILENAME"; then
         # Delete the line with the matching package name
@@ -100,7 +100,7 @@ remove_package() {
         echo "Package $package_name not found."
     fi
 }
-search_package() {
+function search_package() {
     local package_name=$1
     local result
     result=$(grep "^$package_name :" "$FILENAME")
