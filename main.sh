@@ -6,20 +6,19 @@ else
     use_brew=true
 fi
 
-# Check if apt-get is installed
+# Check if apt is installed
 if ! command -v apt &> /dev/null; then
     use_apt=false
 else
     use_apt=true
 fi
-
+# Exit if neither Homebrew nor apt is available
 if [ "$use_brew" = false ] && [ "$use_apt" = false ]; then
     echo "Neither Homebrew nor apt is available. Exiting."
     exit 1
 fi
-
+# Create package index file if it doesn't exist
 FILENAME="/usr/package_index.txt"
-
 if [ ! -e "$FILENAME" ]; then
     touch "$FILENAME"
 fi
@@ -38,8 +37,7 @@ function brew_install(){
 
 function apt_install(){
     if [ "$use_apt" = true ]; then
-        sudo apt install -y "$1"
-        if [ $? -eq 0 ]; then
+        if sudo apt install -y "$1"; then
             add_package "$package" "apt"
             return 0
         else
@@ -54,7 +52,6 @@ function apt_install(){
 
 function brew_remove(){
     if [ "$use_brew" = true ]; then
-        
         if brew uninstall "$1"; then
             remove_package "$package"
             return 0
@@ -66,7 +63,6 @@ function brew_remove(){
 
 function apt_remove(){
     if [ "$use_apt" = true ]; then
-        
         if  sudo apt remove "$1"; then
             remove_package "$package"
             return 0
@@ -95,6 +91,7 @@ function add_package() {
 function remove_package() {
     local package_name=$1
     if grep -q "^$package_name :" "$FILENAME"; then
+        # handle macos and linux sed differently
         if [[ "$OSTYPE" == "darwin"* ]]; then
             sed -i '' "/^$package_name :/d" "$FILENAME"
         else
@@ -183,6 +180,7 @@ case "$command" in
         apt_packages=($(apt list --installed | awk -F/ '{print $1}'))
         apt_packages=("${apt_packages[@]:1}")
         total_packages_len=$(( ${#brew_packages[@]} + ${#apt_packages[@]} ))
+        # reindex packages in parallel for faster execution
         (
             for package in "${brew_packages[@]}"; do
                 add_package "$package" "brew"
