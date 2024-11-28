@@ -1,5 +1,3 @@
-
-
 # Package Management Script
 
 This script is designed to help you install, remove, and manage software packages using `brew` and `apt` package managers. It supports basic operations like installing, removing, and updating packages, as well as searching and reindexing the installed packages.
@@ -22,12 +20,14 @@ This script is designed to help you install, remove, and manage software package
 
 Ensure that both `brew` and `apt` are installed on your system. If you don't have them installed, the script will attempt to use only the available package manager.
 
-### Homebrew Installation (if not installed):
+### Homebrew Installation (if not installed)
+
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-### APT Installation (for Debian/Ubuntu-based systems):
+### APT Installation (for Debian/Ubuntu-based systems)
+
 ```bash
 sudo apt update
 sudo apt install apt
@@ -47,6 +47,7 @@ sudo apt install apt
 ### Example Commands
 
 #### Install Packages
+
 ```bash
 ./main.sh install wget python3
 ```
@@ -54,6 +55,7 @@ sudo apt install apt
 This will attempt to install `wget` and `python3` using Homebrew first, and if that fails, it will try using APT.
 
 #### Remove Packages
+
 ```bash
 ./main.sh remove wget python3
 ```
@@ -61,6 +63,7 @@ This will attempt to install `wget` and `python3` using Homebrew first, and if t
 This will attempt to remove `wget` and `python3` using Homebrew first, and if that fails, it will try using APT.
 
 #### Update Package Lists
+
 ```bash
 ./main.sh update
 ```
@@ -68,6 +71,7 @@ This will attempt to remove `wget` and `python3` using Homebrew first, and if th
 This will update both the APT and Homebrew package lists.
 
 #### Reindex Packages
+
 ```bash
 ./main.sh reindex
 ```
@@ -75,6 +79,7 @@ This will update both the APT and Homebrew package lists.
 This will rebuild the `/usr/package_index.txt` file with the current package list from both Homebrew and APT.
 
 #### Search Package Manager
+
 ```bash
 ./main.sh search wget
 ```
@@ -82,6 +87,7 @@ This will rebuild the `/usr/package_index.txt` file with the current package lis
 This will search the index file to see if `wget` is managed by Homebrew or APT.
 
 #### List Installed Packages
+
 ```bash
 ./main.sh list
 ```
@@ -105,7 +111,8 @@ This will display all the installed packages in the `/usr/package_index.txt` fil
 ## Example Output
 
 - **Install Example**:
-  ```
+
+  ```bash
   sudo ./main.sh install wget python3
   Packages to install: wget python3
   Package manager: apt
@@ -116,7 +123,8 @@ This will display all the installed packages in the `/usr/package_index.txt` fil
   ```
 
 - **Remove Example**:
-  ```
+
+  ```bash
   sudo ./main.sh remove wget
   Removing wget with Homebrew...
   Package wget removed.
